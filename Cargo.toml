@@ -1,0 +1,30 @@
+[package]
+name = "nrf"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+embassy-executor = { version = "0.7", features = ["task-arena-size-32768", "arch-cortex-m", "executor-thread", "executor-interrupt", "defmt"] }
+embassy-nrf = { version = "0.3.1", features = ["defmt", "nrf52840", "time-driver-rtc1", "gpiote", "unstable-pac", "time"]}
+embassy-usb = { version = "0.4", features = ["defmt"] }
+embassy-futures = { version = "0.1"}
+embassy-sync = { version = "0.6", features = ["defmt"] }
+embassy-time = { version = "0.4", features = ["defmt", "defmt-timestamp-uptime"] }
+embassy-embedded-hal = { version = "0.3" }
+embedded-hal = { version = "1.0" }
+defmt = "0.3"
+defmt-rtt = "0.4"
+cortex-m = { version = "0.7.7", features = ["inline-asm", "critical-section-single-core"] }
+cortex-m-rt = "0.7"
+panic-probe = { version = "0.3", features = ["print-defmt"] }
+
+[patch.crates-io]
+embassy-executor = { git = "https://github.com/embassy-rs/embassy", rev = "9d672c44d1dccaac039c656bc2986c4fcf9823c9"}
+embassy-nrf =  { git = "https://github.com/embassy-rs/embassy", rev = "9d672c44d1dccaac039c656bc2986c4fcf9823c9"}
+embassy-usb =  { git = "https://github.com/embassy-rs/embassy", rev = "9d672c44d1dccaac039c656bc2986c4fcf9823c9"}
+embassy-futures =  { git = "https://github.com/embassy-rs/embassy", rev = "9d672c44d1dccaac039c656bc2986c4fcf9823c9"}
+embassy-sync =  { git = "https://github.com/embassy-rs/embassy", rev = "9d672c44d1dccaac039c656bc2986c4fcf9823c9"}
+embassy-time =  { git = "https://github.com/embassy-rs/embassy", rev = "9d672c44d1dccaac039c656bc2986c4fcf9823c9"}
+embassy-embedded-hal =  { git = "https://github.com/embassy-rs/embassy", rev = "9d672c44d1dccaac039c656bc2986c4fcf9823c9"}
+embassy-time-driver = { git = "https://github.com/embassy-rs/embassy", rev = "9d672c44d1dccaac039c656bc2986c4fcf9823c9", version = "0.2.0" }
+embassy-time-queue-utils = { git = "https://github.com/embassy-rs/embassy", rev = "9d672c44d1dccaac039c656bc2986c4fcf9823c9", version = "0.1.0" }
