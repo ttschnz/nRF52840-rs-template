@@ -1,3 +1,6 @@
+[target.thumbv7em-none-eabihf]
+runner = "rust-script ./flash.rs"
+
 [build]
 target = "thumbv7em-none-eabihf"
 

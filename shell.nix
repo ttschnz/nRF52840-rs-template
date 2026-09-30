@@ -40,5 +40,6 @@ pkgs'.mkShell {
     binutils
     cargo-binutils
     uf2conv
+    rust-script
   ];
 }
