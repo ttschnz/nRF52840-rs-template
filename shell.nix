@@ -35,6 +35,7 @@ in
 pkgs'.mkShell {
   packages = with pkgs'; [
     rust
+    rust-analyzer
     probe-rs-tools
     llvm
     binutils
@@ -42,4 +43,9 @@ pkgs'.mkShell {
     uf2conv
     rust-script
   ];
+  shellHook = ''
+    export TMPDIR="$HOME/.cache/nix-shell-tmp"
+    mkdir -p "$TMPDIR"
+    chmod 700 "$TMPDIR"
+  '';
 }
