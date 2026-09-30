@@ -93,19 +93,42 @@ fn wait_and_mount_linux(label: &str) -> String {
     dir
 }
 
-/// True once Windows reports that D:\ exists.
-fn windows_drive_present(letter: char) -> bool {
-    let out = Command::new("powershell.exe")
-        .args([
-            "-NoProfile",
-            "-Command",
-            &format!("Test-Path {letter}:\\"),
-        ])
-        .output();
-    match out {
-        Ok(o) => String::from_utf8_lossy(&o.stdout).trim() == "True",
-        Err(_) => false,
+fn wait_and_mount_wsl(label: &str) -> String {
+    let mount = format!("/mnt/{}", label.to_lowercase());
+
+    // Drop any dead mount from a previous run; must come before mkdir.
+    let _ = succeeds("sudo", &["umount", "-l", &mount]);
+
+    println!("Waiting for volume {label} ...");
+    let letter = loop {
+        if let Some(l) = find_windows_drive(label) {
+            break l.to_ascii_uppercase();
+        }
+        sleep(2);
+    };
+
+    exec("sudo", &["mkdir", "-p", &mount]);
+    let drive = format!("{letter}:");
+    while !succeeds("sudo", &["mount", "-t", "drvfs", &drive, &mount]) {
+        sleep(2);
     }
+    println!("{drive} mounted at {mount}");
+    mount
+}
+
+/// Ask Windows which drive letter (if any) the volume with this label has.
+fn find_windows_drive(label: &str) -> Option<char> {
+    let cmd = format!(
+        "(Get-Volume -FileSystemLabel '{label}' -ErrorAction SilentlyContinue).DriveLetter"
+    );
+    let out = Command::new("powershell.exe")
+        .args(["-NoProfile", "-Command", &cmd])
+        .output()
+        .ok()?;
+    String::from_utf8_lossy(&out.stdout)
+        .lines()
+        .map(str::trim)
+        .find_map(|l| l.chars().next().filter(|c| c.is_ascii_alphabetic()))
 }
 
 #[cfg(target_os = "linux")]
@@ -126,23 +149,7 @@ fn main() {
     let _ = fs::remove_file("nrf.bin");
 
     let dest_dir: &str = if wsl::is_wsl() {
-        let mount = "/mnt/d";
-
-        // Drop any stale mount from a previous run (harmless if nothing is mounted).
-        // Must come before mkdir, which stats the path and fails on a dead mount.
-        let _ = succeeds("sudo", &["umount", "-l", mount]);
-
-        println!("Waiting for D: ...");
-        while !windows_drive_present('D') {
-            sleep(2);
-        }
-
-        exec("sudo", &["mkdir", "-p", mount]);
-        while !succeeds("sudo", &["mount", "-t", "drvfs", "D:", mount]) {
-            sleep(2);
-        }
-        println!("D: mounted at {mount}");
-        mount
+        &wait_and_mount_wsl("XIAO-SENSE")
     } else {
         &wait_and_mount_linux("XIAO-SENSE")
     };
