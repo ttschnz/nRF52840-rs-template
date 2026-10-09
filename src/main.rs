@@ -2,38 +2,20 @@
 #![no_main]
 
 use embassy_executor::Spawner;
-use embassy_nrf::gpio::{Level, Output, OutputDrive};
+use embassy_nrf::{Peri, gpio::{AnyPin,Level, Output, OutputDrive}};
 use embassy_time::Timer;
 use {defmt_rtt as _, panic_probe as _};
-use defmt::info;
 
-const DELAY_DUR:u64 = 200;
+mod tasks;
+use tasks::blink_task;
 
 #[embassy_executor::main]
-async fn main(_spawner: Spawner) {
+async fn main(spawner: Spawner) {
     let p = embassy_nrf::init(Default::default());
-    let mut led_red = Output::new(p.P0_26, Level::High, OutputDrive::Standard);
-    let mut led_green = Output::new(p.P0_30, Level::High, OutputDrive::Standard);
-    let mut led_blue = Output::new(p.P0_06, Level::High, OutputDrive::Standard);
+    let led_red_port: Peri<'static, AnyPin> = p.P0_26.into();
+    let led_green_port: Peri<'static, AnyPin> = p.P0_30.into();
+    let led_blue_port: Peri<'static, AnyPin> = p.P0_06.into();
     
-    info!("Starting...");
-    
-    led_red.set_high();
-    led_green.set_high();
-    led_blue.set_high();
-
-    loop {
-        led_red.set_low();
-        Timer::after_millis(DELAY_DUR).await;
-        led_red.set_high();
-
-        led_green.set_low();
-        Timer::after_millis(DELAY_DUR).await;
-        led_green.set_high();
-
-        led_blue.set_low();
-        Timer::after_millis(DELAY_DUR).await;
-        led_blue.set_high();
-    }
+    spawner.spawn(blink_task(led_red_port, led_green_port, led_blue_port).expect("blink task"));
 }
 
