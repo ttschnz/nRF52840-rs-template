@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 embassy-executor = { version = "0.10.0", features = ["executor-thread", "executor-interrupt", "defmt", "platform-cortex-m"] }
-embassy-nrf = { version = "0.10.0", features = ["defmt", "nrf52840", "time-driver-rtc1", "gpiote", "unstable-pac", "time"]}
+embassy-nrf = { version = "0.11.0", features = ["defmt", "nrf52840", "time-driver-rtc1", "gpiote", "unstable-pac", "time"]}
 embassy-usb = { version = "0.6", features = ["defmt"] }
 embassy-futures = { version = "0.1.2"}
 embassy-sync = { version = "0.8", features = ["defmt"] }
@@ -13,11 +13,10 @@ embassy-time = { version = "0.5.1", features = ["defmt", "defmt-timestamp-uptime
 embassy-embedded-hal = { version = "0.6" }
 embedded-hal = { version = "1.0" }
 nrf-softdevice = { version = "0.1.0", features=["ble-peripheral", "nrf52840", "s140", "ble-gatt-server", "evt-max-size-512"], git="https://github.com/embassy-rs/nrf-softdevice"}
-defmt = "0.3"
-defmt-rtt = "0.4"
+defmt = "1.1.1"
+defmt-rtt = "1.3.0"
 cortex-m = { version = "0.7.7", features = ["inline-asm", "critical-section-single-core"] }
 cortex-m-rt = "0.7"
-panic-probe = { version = "0.3", features = ["print-defmt"] }
 heapless = "0.9.3"
 embedded-storage = "0.3.2"
 embedded-storage-async = "0.4.2"

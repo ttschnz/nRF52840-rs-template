@@ -4,6 +4,8 @@ use embassy_nrf::{
 };
 use embassy_time::Timer;
 
+use crate::usb_log;
+
 const DELAY_DUR: u64 = 200;
 
 #[embassy_executor::task]
@@ -32,5 +34,7 @@ pub async fn blink_task(
         led_blue.set_low();
         Timer::after_millis(DELAY_DUR).await;
         led_blue.set_high();
+
+        usb_log!("blink");
     }
 }
